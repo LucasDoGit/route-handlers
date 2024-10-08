@@ -1,20 +1,27 @@
 import { Product } from "@/utils/types/produts";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "./services/firebaseConnection";
 
-async function fetchProducts() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`, {
-    next: { revalidate: 60 }, // Revalida a cada 60 segundos
-  });
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch products');
+async function fetchProducts(){
+  try {
+    const productsCollection = collection(db, 'products');
+    const productSnapshot = await getDocs(productsCollection);
+    const products: Product[] = productSnapshot.docs.map(doc => ({
+      id: doc.id,
+      name: doc.data().name,
+      description: doc.data().description,
+      image: doc.data().imageUrl,
+      price: doc.data().price
+    }));
+    return products
+  } catch (error) {
+    throw new Error("Error to fetch products")
   }
-
-  return res.json();
 }
 
 export default async function Home() {
-  const products: Product[] = await fetchProducts();
-  
+  const products: Product[] = await fetchProducts()
+
   return (
     <div>
       <h1>Lista de Produtos</h1>
@@ -30,3 +37,6 @@ export default async function Home() {
     </div>
   );
 }
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 60;
