@@ -13,18 +13,18 @@ async function fetchProducts() {
 }
 
 export default async function Home() {
-  const products: Product[] = await fetchProducts();
+  // const products: Product[] = await fetchProducts();
   return (
     <div>
       <h1>Lista de Produtos</h1>
       <ul>
-        {products.map(product => (
+        {/* {products.map(product => (
           <li key={product.id}>
             <h2>{product.name}</h2>
             <p>{product.description}</p>
             <p>Preço: R$ {product.price}</p>
           </li>
-        ))}
+        ))} */}
       </ul>
     </div>
   );
